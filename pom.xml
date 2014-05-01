@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -8,12 +9,25 @@
 	</parent>
 
 	<artifactId>ddth-id</artifactId>
-	<version>0.1.0</version>
+	<version>0.1.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<name>ddth-id</name>
 	<description>DDTH's ID Generator Library</description>
 	<url>https://github.com/DDTH/ddth-id</url>
+
+	<scm>
+		<url>git@github.com:DDTH/ddth-id</url>
+		<connection>scm:git:git@github.com:DDTH/ddth-id</connection>
+		<developerConnection>scm:git:git@github.com:DDTH/ddth-id</developerConnection>
+	</scm>
+	<developers>
+		<developer>
+			<id>btnguyen2k</id>
+			<name>Thanh Ba Nguyen</name>
+			<email>btnguyen2k@gmail.com</email>
+		</developer>
+	</developers>
 
 	<properties>
 		<version.ddth-redis>0.3.1</version.ddth-redis>
