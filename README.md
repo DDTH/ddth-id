@@ -11,7 +11,7 @@ OSGi environment: ddth-id modules are packaged as an OSGi bundle.
 
 ## License ##
 
-See LICENSE.txt for details. Copyright (c) 2014 Thanh Ba Nguyen.
+See LICENSE.txt for details. Copyright (c) 2014-2015 Thanh Ba Nguyen.
 
 Third party libraries are distributed under their own licenses.
 
@@ -32,12 +32,12 @@ Maven dependency:
 
 ## Usage ##
 
-`ddth-id` can generate several types of IDs:
+`ddth-id` can generate several types of ID:
 
 - Distributed:
-  - Based on Twitter Snowflake algorithm: 40, 64 and 128-bit integers.
-  - Generated IDs are unique across all nodes (provided each node has a unique id).
-  - Next generated ID is larger than prebious IDs.
+  - Based on Twitter Snowflake algorithm: 48, 64 and 128-bit integers.
+  - Generated IDs are unique across all nodes (each node must has a unique node-id).
+  - Next generated ID is larger than previous ones.
   - Time-based: each generated ID is associated with a timestamp.
   - Non-serial: `next-id` is NOT equal to `previous-id + 1`!
 - Serial:
