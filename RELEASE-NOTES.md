@@ -1,7 +1,14 @@
 ddth-id release notes
 =====================
 
+0.2.0 - 2015-02-20
+------------------
+- Now require Java 7.
+- Bug fix: Zookeeper id generator.
+- Support method `currentId()` for serial id generators.
+- Add JUnit test cases.
+
 
 0.1.0 - 2014-05-02
 ------------------
-- First release.
+- First release: Snowflake, Redis & Zookeeper id generators.

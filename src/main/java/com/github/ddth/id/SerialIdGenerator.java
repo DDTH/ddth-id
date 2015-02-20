@@ -24,28 +24,36 @@ import com.google.common.cache.RemovalNotification;
  */
 public abstract class SerialIdGenerator {
 
-	protected static Cache<String, SerialIdGenerator> idGenerators = CacheBuilder
-			.newBuilder().expireAfterAccess(3600, TimeUnit.SECONDS)
-			.removalListener(new RemovalListener<String, SerialIdGenerator>() {
-				@Override
-				public void onRemoval(
-						RemovalNotification<String, SerialIdGenerator> entry) {
-					entry.getValue().destroy();
-				}
-			}).build();
+    protected static Cache<String, SerialIdGenerator> idGenerators = CacheBuilder.newBuilder()
+            .expireAfterAccess(3600, TimeUnit.SECONDS)
+            .removalListener(new RemovalListener<String, SerialIdGenerator>() {
+                @Override
+                public void onRemoval(RemovalNotification<String, SerialIdGenerator> entry) {
+                    entry.getValue().destroy();
+                }
+            }).build();
 
-	public SerialIdGenerator init() {
-		return this;
-	}
+    public SerialIdGenerator init() {
+        return this;
+    }
 
-	public void destroy() {
-		// EMPTY
-	}
+    public void destroy() {
+        // EMPTY
+    }
 
-	/**
-	 * Generates next id.
-	 * 
-	 * @return
-	 */
-	public abstract long nextId(String namespace);
+    /**
+     * Generates next id.
+     * 
+     * @return
+     */
+    public abstract long nextId(final String namespace);
+
+    /**
+     * Gets current id.
+     * 
+     * @param namespace
+     * @return
+     * @since 0.2.0
+     */
+    public abstract long currentId(final String namespace);
 }
