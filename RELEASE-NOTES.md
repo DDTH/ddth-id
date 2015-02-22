@@ -1,6 +1,11 @@
 ddth-id release notes
 =====================
 
+0.3.0 - 2015-02-22
+------------------
+- Add `JdbcIdGenerator`.
+
+
 0.2.0 - 2015-02-20
 ------------------
 - Now require Java 7.

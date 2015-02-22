@@ -18,7 +18,7 @@ Third party libraries are distributed under their own licenses.
 
 ## Installation #
 
-Latest release version: `0.2.0`. See [RELEASE-NOTES.md](RELEASE-NOTES.md).
+Latest release version: `0.3.0`. See [RELEASE-NOTES.md](RELEASE-NOTES.md).
 
 Maven dependency:
 
@@ -26,7 +26,7 @@ Maven dependency:
 <dependency>
 	<groupId>com.github.ddth</groupId>
 	<artifactId>ddth-id</artifactId>
-	<version>0.2.0</version>
+	<version>0.3.0</version>
 </dependency>
 ```
 
@@ -71,10 +71,15 @@ SerialIdGenerator idGenRedis = RedisIdGenerator.getInstance("localhost", 6379);
 //generate IDs, backed by Zookeeper.
 SerialIdGenerator idGenZk = ZookeeperIdGenerator.getInstance("localhost:2181/idgen");
 
+//generate IDs, backed by a database system.
+JdbcIdGenerator idGenJdbc = JdbcIdGenerator.getInstance("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/tempdb", "user", "password", "tableName");
+
 //generate an ID within namespace "users"
 long userId = idGenRedis.nextId("users");
 
 //generate an ID within namespace "topics"
 long topicId = idGenZk("topics");
 
+//generate an ID within namespace "default"
+long id = idGenJdbc("default");
 ```
