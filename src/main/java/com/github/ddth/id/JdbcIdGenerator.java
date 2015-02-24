@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.dao.DeadlockLoserDataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
@@ -165,6 +166,8 @@ public class JdbcIdGenerator extends SerialIdGenerator {
             } else {
                 return _insert(jdbcTemplate, namespace, numRetries + 1, maxRetries);
             }
+        } catch (DuplicateKeyException e) {
+            return false;
         }
     }
 
