@@ -1,6 +1,11 @@
 ddth-id release notes
 =====================
 
+0.3.1 - 2015-02-24
+------------------
+- Bug fix: handle `DeadlockLoserDataAccessException`.
+
+
 0.3.0 - 2015-02-22
 ------------------
 - Add `JdbcIdGenerator`.

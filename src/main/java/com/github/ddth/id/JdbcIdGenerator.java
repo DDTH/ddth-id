@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.springframework.dao.DeadlockLoserDataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
@@ -121,25 +122,50 @@ public class JdbcIdGenerator extends SerialIdGenerator {
         super.destroy();
     }
 
-    private boolean _update(JdbcTemplate jdbcTemplate, final String namespace) {
-        int status = jdbcTemplate.update(sqlUpdate, namespace);
-        return status > 0;
+    private boolean _update(final JdbcTemplate jdbcTemplate, final String namespace,
+            final int numRetries, final int maxRetries) {
+        try {
+            int status = jdbcTemplate.update(sqlUpdate, namespace);
+            return status > 0;
+        } catch (DeadlockLoserDataAccessException dle) {
+            if (numRetries > maxRetries) {
+                throw dle;
+            } else {
+                return _update(jdbcTemplate, namespace, numRetries + 1, maxRetries);
+            }
+        }
     }
 
     private final static Long ZERO = new Long(0);
 
-    private Long _select(JdbcTemplate jdbcTemplate, final String namespace) {
+    private Long _select(final JdbcTemplate jdbcTemplate, final String namespace,
+            final int numRetries, final int maxRetries) {
         try {
             Long result = jdbcTemplate.queryForObject(sqlSelect, Long.class, namespace);
             return result;
         } catch (EmptyResultDataAccessException e) {
             return ZERO;
+        } catch (DeadlockLoserDataAccessException dle) {
+            if (numRetries > maxRetries) {
+                throw dle;
+            } else {
+                return _select(jdbcTemplate, namespace, numRetries + 1, maxRetries);
+            }
         }
     }
 
-    private boolean _insert(JdbcTemplate jdbcTemplate, final String namespace) {
-        int status = jdbcTemplate.update(sqlInsert, namespace);
-        return status > 0;
+    private boolean _insert(JdbcTemplate jdbcTemplate, final String namespace,
+            final int numRetries, final int maxRetries) {
+        try {
+            int status = jdbcTemplate.update(sqlInsert, namespace);
+            return status > 0;
+        } catch (DeadlockLoserDataAccessException dle) {
+            if (numRetries > maxRetries) {
+                throw dle;
+            } else {
+                return _insert(jdbcTemplate, namespace, numRetries + 1, maxRetries);
+            }
+        }
     }
 
     /**
@@ -153,11 +179,11 @@ public class JdbcIdGenerator extends SerialIdGenerator {
                 conn.setAutoCommit(false);
                 conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
                 JdbcTemplate jdbcTemplate = jdbcTemplate(conn);
-                if (!_update(jdbcTemplate, namespace)) {
-                    _insert(jdbcTemplate, namespace);
-                    _update(jdbcTemplate, namespace);
+                if (!_update(jdbcTemplate, namespace, 0, 3)) {
+                    _insert(jdbcTemplate, namespace, 0, 3);
+                    _update(jdbcTemplate, namespace, 0, 3);
                 }
-                Long result = _select(jdbcTemplate, namespace);
+                Long result = _select(jdbcTemplate, namespace, 0, 3);
                 conn.commit();
                 return result != null ? result.longValue() : 0;
             } catch (SQLException e) {
@@ -180,7 +206,7 @@ public class JdbcIdGenerator extends SerialIdGenerator {
             Connection conn = connection();
             try {
                 JdbcTemplate jdbcTemplate = jdbcTemplate(conn);
-                Long result = _select(jdbcTemplate, namespace);
+                Long result = _select(jdbcTemplate, namespace, 0, 3);
                 return result != null ? result.longValue() : 0;
             } finally {
                 conn.close();
