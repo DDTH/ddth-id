@@ -177,16 +177,16 @@ Concurrency = 64
 
 Concurrency = 256
 ```
-[MySQL]:    Completed 32000 ops in 21.819 secs (~1466.612 ops/sec), op time: 1.00/8190.00/151.45/221.00/502.50 (ms)
-[MySQL]:    Completed 32000 ops in 16.344 secs (~1957.905 ops/sec), op time: 1.00/9533.00/97.10/2.00/407.00 (ms)
-[MySQL]:    Completed 32000 ops in 16.212 secs (~1973.847 ops/sec), op time: 1.00/12897.00/85.01/2.00/3.00 (ms)
-[MySQL]:    Completed 32000 ops in 16.854 secs (~1898.659 ops/sec), op time: 1.00/14090.00/88.34/2.00/5.00 (ms)
-[MySQL]:    Completed 32000 ops in 17.375 secs (~1841.727 ops/sec), op time: 1.00/13974.00/91.32/2.00/5.00 (ms)
-[MySQL]:    Completed 32000 ops in 16.179 secs (~1977.873 ops/sec), op time: 1.00/14407.00/85.22/2.00/3.00 (ms)
-[MySQL]:    Completed 32000 ops in 17.439 secs (~1834.968 ops/sec), op time: 1.00/15376.00/91.40/2.00/4.00 (ms)
-[MySQL]:    Completed 32000 ops in 16.829 secs (~1901.480 ops/sec), op time: 1.00/15538.00/88.61/2.00/4.00 (ms)
-[MySQL]:    Completed 32000 ops in 16.915 secs (~1891.812 ops/sec), op time: 1.00/15280.00/90.82/2.00/4.00 (ms)
-[MySQL]:    Completed 32000 ops in 16.410 secs (~1950.030 ops/sec), op time: 1.00/14259.00/85.03/2.00/4.00 (ms)
+[MySQL]:    Completed 32000 ops in 30.993 secs (~1032.491 ops/sec), op time: 2.00/26520.00/197.32/244.00/721.35 (ms)
+[MySQL]:    Completed 32000 ops in 29.616 secs (~1080.497 ops/sec), op time: 2.00/26799.00/174.19/4.00/523.80 (ms)
+[MySQL]:    Completed 32000 ops in 28.933 secs (~1106.004 ops/sec), op time: 2.00/27973.00/148.63/4.00/5.00 (ms)
+[MySQL]:    Completed 32000 ops in 29.002 secs (~1103.372 ops/sec), op time: 2.00/27830.00/145.94/4.00/4.00 (ms)
+[MySQL]:    Completed 32000 ops in 29.044 secs (~1101.777 ops/sec), op time: 2.00/26585.00/147.84/4.00/5.00 (ms)
+[MySQL]:    Completed 32000 ops in 28.602 secs (~1118.803 ops/sec), op time: 2.00/28121.00/148.43/4.00/5.00 (ms)
+[MySQL]:    Completed 32000 ops in 28.991 secs (~1103.791 ops/sec), op time: 2.00/27240.00/147.75/4.00/4.00 (ms)
+[MySQL]:    Completed 32000 ops in 29.063 secs (~1101.056 ops/sec), op time: 2.00/27815.00/147.12/4.00/4.00 (ms)
+[MySQL]:    Completed 32000 ops in 28.878 secs (~1108.110 ops/sec), op time: 2.00/27972.00/145.56/4.00/4.00 (ms)
+[MySQL]:    Completed 32000 ops in 28.856 secs (~1108.955 ops/sec), op time: 2.00/26703.00/144.84/4.00/4.00 (ms)
 ```
 
 
