@@ -68,7 +68,7 @@ public class JdbcIdGenerator extends SerialIdGenerator {
 
     private DataSource dataSource;
     private String tableName;
-    private String sqlInsert, sqlUpdate, sqlSelect;
+    private String sqlInsert, sqlUpdate, sqlSelect, sqlUpdateSet;
     private String colName = "id_name";
     private String colValue = "id_value";
 
@@ -109,6 +109,8 @@ public class JdbcIdGenerator extends SerialIdGenerator {
                 colName, colValue);
         sqlUpdate = MessageFormat.format("UPDATE {0} SET {2}={2}+1 WHERE {1}=?", tableName,
                 colName, colValue);
+        sqlUpdateSet = MessageFormat.format("UPDATE {0} SET {2}=? WHERE {1}=?", tableName, colName,
+                colValue);
         sqlSelect = MessageFormat.format("SELECT {2} FROM {0} WHERE {1}=?", tableName, colName,
                 colValue);
 
@@ -133,6 +135,23 @@ public class JdbcIdGenerator extends SerialIdGenerator {
                 throw dle;
             } else {
                 return _update(jdbcTemplate, namespace, numRetries + 1, maxRetries);
+            }
+        }
+    }
+
+    /**
+     * @since 0.4.0
+     */
+    private boolean _updateSet(final JdbcTemplate jdbcTemplate, final String namespace,
+            final long value, final int numRetries, final int maxRetries) {
+        try {
+            int status = jdbcTemplate.update(sqlUpdateSet, value, namespace);
+            return status > 0;
+        } catch (DeadlockLoserDataAccessException dle) {
+            if (numRetries > maxRetries) {
+                throw dle;
+            } else {
+                return _updateSet(jdbcTemplate, namespace, value, numRetries + 1, maxRetries);
             }
         }
     }
@@ -167,31 +186,77 @@ public class JdbcIdGenerator extends SerialIdGenerator {
                 return _insert(jdbcTemplate, namespace, numRetries + 1, maxRetries);
             }
         } catch (DuplicateKeyException e) {
-            return false;
+            return true;
         }
+    }
+
+    /**
+     * @since 0.3.3
+     */
+    private long nextId(final String namespace, final boolean firstRun) {
+        // normal case: update & get the value
+        try {
+            Connection conn = connection();
+            try {
+                conn.setAutoCommit(false);
+                JdbcTemplate jdbcTemplate = jdbcTemplate(conn);
+                if (_update(jdbcTemplate, namespace, 0, 3)) {
+                    Long result = _select(jdbcTemplate, namespace, 0, 3);
+                    conn.commit();
+                    return result != null ? result.longValue() : 0;
+                }
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.close();
+            }
+        } catch (SQLException e) {
+            throw new IdException.OperationFailedException(e);
+        }
+
+        if (!firstRun) {
+            throw new IdException.OperationFailedException();
+        }
+
+        // first update failed, the row does not exist in db table, try to
+        // insert it
+        try {
+            Connection conn = connection();
+            try {
+                conn.setAutoCommit(true);
+                JdbcTemplate jdbcTemplate = jdbcTemplate(conn);
+                _insert(jdbcTemplate, namespace, 0, 3);
+            } finally {
+                conn.close();
+            }
+        } catch (SQLException e) {
+            throw new IdException.OperationFailedException(e);
+        }
+
+        return nextId(namespace, true);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public long nextId(String namespace) {
+    public long nextId(final String namespace) {
+        return nextId(namespace, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long currentId(final String namespace) {
         try {
             Connection conn = connection();
             try {
-                conn.setAutoCommit(false);
-                conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                conn.setAutoCommit(true);
                 JdbcTemplate jdbcTemplate = jdbcTemplate(conn);
-                if (!_update(jdbcTemplate, namespace, 0, 3)) {
-                    _insert(jdbcTemplate, namespace, 0, 3);
-                    _update(jdbcTemplate, namespace, 0, 3);
-                }
                 Long result = _select(jdbcTemplate, namespace, 0, 3);
-                conn.commit();
                 return result != null ? result.longValue() : 0;
-            } catch (SQLException e) {
-                conn.rollback();
-                throw e;
             } finally {
                 conn.close();
             }
@@ -202,15 +267,17 @@ public class JdbcIdGenerator extends SerialIdGenerator {
 
     /**
      * {@inheritDoc}
+     * 
+     * @since 0.4.0
      */
     @Override
-    public long currentId(String namespace) {
+    public boolean setValue(final String namespace, final long value) {
         try {
             Connection conn = connection();
             try {
+                conn.setAutoCommit(true);
                 JdbcTemplate jdbcTemplate = jdbcTemplate(conn);
-                Long result = _select(jdbcTemplate, namespace, 0, 3);
-                return result != null ? result.longValue() : 0;
+                return _updateSet(jdbcTemplate, namespace, value, 0, 3);
             } finally {
                 conn.close();
             }

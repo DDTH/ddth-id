@@ -33,6 +33,15 @@ public abstract class SerialIdGenerator {
                 }
             }).build();
 
+    /**
+     * Invalidates all cached {@link SerialIdGenerator}.
+     * 
+     * @since 0.4.0
+     */
+    public static void invalidate() {
+        idGenerators.invalidateAll();
+    }
+
     public SerialIdGenerator init() {
         return this;
     }
@@ -56,4 +65,14 @@ public abstract class SerialIdGenerator {
      * @since 0.2.0
      */
     public abstract long currentId(final String namespace);
+
+    /**
+     * Sets a value.
+     * 
+     * @param namespace
+     * @param value
+     * @return
+     * @since 0.4.0
+     */
+    public abstract boolean setValue(final String namespace, final long value);
 }

@@ -2,6 +2,7 @@ package com.github.ddth.id;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Semaphore;
 
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
@@ -9,6 +10,7 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.atomic.AtomicValue;
 import org.apache.curator.framework.recipes.atomic.DistributedAtomicLong;
 import org.apache.curator.framework.recipes.atomic.PromotedToLock;
+import org.apache.curator.retry.BoundedExponentialBackoffRetry;
 import org.apache.curator.retry.RetryNTimes;
 
 /**
@@ -38,7 +40,7 @@ public class ZookeeperIdGenerator extends SerialIdGenerator {
                         @Override
                         public SerialIdGenerator call() throws Exception {
                             ZookeeperIdGenerator idGen = new ZookeeperIdGenerator();
-                            idGen.setZookeeperConnString(zkConnString).init();
+                            idGen.setZookeeperConnString(zkConnString).setConcurrency(4).init();
                             return idGen;
                         }
                     });
@@ -50,6 +52,8 @@ public class ZookeeperIdGenerator extends SerialIdGenerator {
 
     private CuratorFramework curatorFramework;
     private String zkConnString = "localhost:2181";
+    private Semaphore semaphore;
+    private int concurrency = 4;
 
     public String getZookeeperConnString() {
         return zkConnString;
@@ -60,12 +64,26 @@ public class ZookeeperIdGenerator extends SerialIdGenerator {
         return this;
     }
 
+    public int getConcurrency() {
+        return concurrency;
+    }
+
+    public ZookeeperIdGenerator setConcurrency(int concurrency) {
+        this.concurrency = concurrency;
+        if (this.concurrency < 1) {
+            this.concurrency = 1;
+        }
+        return this;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public ZookeeperIdGenerator init() {
         super.init();
+
+        semaphore = new Semaphore(concurrency, true);
 
         RetryPolicy retryPolicy = new RetryNTimes(1, 2000);
         curatorFramework = CuratorFrameworkFactory.newClient(zkConnString, 3600000, 3000,
@@ -104,16 +122,18 @@ public class ZookeeperIdGenerator extends SerialIdGenerator {
      * {@inheritDoc}
      */
     @Override
-    public long nextId(String namespace) {
+    public long nextId(final String namespace) {
         final String[] paths = calcPathIdAndPathLock(namespace);
         final String pathId = paths[0];
         final String pathLock = paths[1];
 
-        RetryPolicy retryPolicy = new RetryNTimes(1, 2000);
-        PromotedToLock promotedToLock = PromotedToLock.builder().retryPolicy(retryPolicy)
+        RetryPolicy retryPolicyMutex = new BoundedExponentialBackoffRetry(10, 1000, 5);
+        PromotedToLock promotedToLock = PromotedToLock.builder().retryPolicy(retryPolicyMutex)
                 .lockPath(pathLock).build();
+        RetryPolicy retryPolicyOptimistic = new RetryNTimes(3, 100);
         DistributedAtomicLong dal = new DistributedAtomicLong(curatorFramework, pathId,
-                retryPolicy, promotedToLock);
+                retryPolicyOptimistic, promotedToLock);
+        semaphore.acquireUninterruptibly();
         try {
             AtomicValue<Long> value = dal.increment();
             if (value != null && value.succeeded()) {
@@ -123,6 +143,7 @@ public class ZookeeperIdGenerator extends SerialIdGenerator {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         } finally {
+            semaphore.release();
         }
     }
 
@@ -130,16 +151,17 @@ public class ZookeeperIdGenerator extends SerialIdGenerator {
      * {@inheritDoc}
      */
     @Override
-    public long currentId(String namespace) {
+    public long currentId(final String namespace) {
         final String[] paths = calcPathIdAndPathLock(namespace);
         final String pathId = paths[0];
         final String pathLock = paths[1];
 
-        RetryPolicy retryPolicy = new RetryNTimes(3, 1000);
-        PromotedToLock promotedToLock = PromotedToLock.builder().retryPolicy(retryPolicy)
+        RetryPolicy retryPolicyMutex = new BoundedExponentialBackoffRetry(10, 1000, 5);
+        PromotedToLock promotedToLock = PromotedToLock.builder().retryPolicy(retryPolicyMutex)
                 .lockPath(pathLock).build();
+        RetryPolicy retryPolicyOptimistic = new RetryNTimes(3, 100);
         DistributedAtomicLong dal = new DistributedAtomicLong(curatorFramework, pathId,
-                retryPolicy, promotedToLock);
+                retryPolicyOptimistic, promotedToLock);
         try {
             AtomicValue<Long> value = dal.get();
             if (value != null && value.succeeded()) {
@@ -149,6 +171,34 @@ public class ZookeeperIdGenerator extends SerialIdGenerator {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         } finally {
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @since 0.4.0
+     */
+    @Override
+    public boolean setValue(final String namespace, final long value) {
+        final String[] paths = calcPathIdAndPathLock(namespace);
+        final String pathId = paths[0];
+        final String pathLock = paths[1];
+
+        RetryPolicy retryPolicyMutex = new BoundedExponentialBackoffRetry(10, 1000, 5);
+        PromotedToLock promotedToLock = PromotedToLock.builder().retryPolicy(retryPolicyMutex)
+                .lockPath(pathLock).build();
+        RetryPolicy retryPolicyOptimistic = new RetryNTimes(3, 100);
+        DistributedAtomicLong dal = new DistributedAtomicLong(curatorFramework, pathId,
+                retryPolicyOptimistic, promotedToLock);
+        semaphore.acquireUninterruptibly();
+        try {
+            dal.forceSet(value);
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        } finally {
+            semaphore.release();
         }
     }
 }

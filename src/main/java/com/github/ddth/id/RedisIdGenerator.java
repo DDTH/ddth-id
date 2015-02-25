@@ -206,4 +206,23 @@ public class RedisIdGenerator extends SerialIdGenerator {
             redisClient.close();
         }
     }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @since 0.4.0
+     */
+    @Override
+    public boolean setValue(final String namespace, final long value) {
+        IRedisClient redisClient = redisFactory.getRedisClient(redisHost, redisPort, redisUser,
+                redisPassword, redisPoolConfig);
+        try {
+            redisClient.set(namespace, String.valueOf(value), IRedisClient.TTL_PERSISTENT);
+            return true;
+        } catch (Exception e) {
+            throw new IdException.OperationFailedException(e);
+        } finally {
+            redisClient.close();
+        }
+    }
 }
