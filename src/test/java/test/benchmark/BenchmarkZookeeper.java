@@ -30,6 +30,10 @@ public class BenchmarkZookeeper extends BaseBenchmarkSerialId {
             zkConnString = "localhost:2181/id-server";
         }
 
+        System.out.println("Num runs: " + numRuns + " / Num threads: " + numThreads
+                + " / Num namespaces: " + numNamespaces);
+        System.out.println("ZK: " + zkConnString);
+
         ZookeeperIdGenerator.invalidate();
         final ZookeeperIdGenerator idGenerator = ZookeeperIdGenerator.getInstance(zkConnString);
 

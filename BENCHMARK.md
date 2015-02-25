@@ -2,6 +2,7 @@
 
 Benchamark date: 2015-02-25
 
+Benchmark mode: everything on same machine.
 Machine: MacBook Pro (Retina, 13-inch, Early 2013) - OS X Yosemite 10.10.2 (14C109)
 2.6 GHz Intel Core i5
 8 GB 1600 MHz DDR3
