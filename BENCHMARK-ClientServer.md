@@ -250,3 +250,63 @@ Concurrency = 32
 [Zookeeper]:    Completed 3200 ops in 29.244 secs (~109.424 ops/sec), op time: 13.00/755.00/288.19/320.00/425.10 (ms)
 ```
 
+
+## Zookeeper ##
+
+Zookeeper: 3 servers, same DC with client machine.
+
+Concurrency = 4
+```
+[Zookeeper]:    Completed 32000 ops in 29.522 secs (~1083.937 ops/sec), op time: 1.00/341.00/3.50/2.00/3.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 29.268 secs (~1093.344 ops/sec), op time: 1.00/326.00/3.41/2.00/2.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 28.083 secs (~1139.479 ops/sec), op time: 0.00/321.00/3.18/2.00/2.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 27.178 secs (~1177.423 ops/sec), op time: 1.00/310.00/3.29/2.00/2.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 28.367 secs (~1128.071 ops/sec), op time: 0.00/317.00/3.35/2.00/2.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 28.451 secs (~1124.741 ops/sec), op time: 1.00/311.00/3.46/2.00/3.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 26.340 secs (~1214.882 ops/sec), op time: 0.00/329.00/3.10/2.00/2.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 28.809 secs (~1110.764 ops/sec), op time: 1.00/323.00/3.36/2.00/2.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 26.831 secs (~1192.650 ops/sec), op time: 1.00/334.00/3.26/2.00/3.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 27.900 secs (~1146.953 ops/sec), op time: 1.00/315.00/3.39/2.00/2.00 (ms)
+```
+
+Concurrency = 16
+```
+[Zookeeper]:    Completed 32000 ops in 25.888 secs (~1236.094 ops/sec), op time: 0.00/335.00/12.64/14.00/20.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 24.526 secs (~1304.738 ops/sec), op time: 0.00/339.00/11.95/14.00/17.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 24.309 secs (~1316.385 ops/sec), op time: 0.00/313.00/11.84/14.00/17.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 24.016 secs (~1332.445 ops/sec), op time: 0.00/319.00/11.72/14.00/17.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 23.697 secs (~1350.382 ops/sec), op time: 1.00/320.00/11.55/13.00/17.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 24.958 secs (~1282.154 ops/sec), op time: 1.00/315.00/12.25/14.00/18.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 24.095 secs (~1328.076 ops/sec), op time: 0.00/360.00/11.78/13.00/17.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 23.889 secs (~1339.529 ops/sec), op time: 0.00/321.00/11.71/13.00/16.55 (ms)
+[Zookeeper]:    Completed 32000 ops in 23.900 secs (~1338.912 ops/sec), op time: 1.00/325.00/11.71/14.00/17.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 23.969 secs (~1335.058 ops/sec), op time: 0.00/376.00/11.65/13.00/17.00 (ms)
+```
+
+Concurrency = 64
+```
+Zookeeper]: Completed 32000 ops in 31.335 secs (~1021.222 ops/sec), op time: 1.00/424.00/61.99/69.00/105.55 (ms)
+[Zookeeper]:    Completed 32000 ops in 28.094 secs (~1139.033 ops/sec), op time: 1.00/409.00/55.37/66.00/81.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 28.435 secs (~1125.374 ops/sec), op time: 1.00/395.00/56.15/66.00/80.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 28.396 secs (~1126.919 ops/sec), op time: 1.00/387.00/55.95/66.00/80.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 28.263 secs (~1132.222 ops/sec), op time: 1.00/381.00/55.68/67.00/79.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 27.152 secs (~1178.550 ops/sec), op time: 1.00/341.00/53.56/65.00/78.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 27.369 secs (~1169.206 ops/sec), op time: 1.00/390.00/54.09/66.00/80.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 28.935 secs (~1105.927 ops/sec), op time: 1.00/389.00/57.13/68.00/82.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 29.341 secs (~1090.624 ops/sec), op time: 1.00/607.00/58.02/68.00/80.00 (ms)
+[Zookeeper]:    Completed 32000 ops in 28.407 secs (~1126.483 ops/sec), op time: 1.00/372.00/56.18/65.00/79.00 (ms)
+```
+
+Concurrency = 256
+```
+[Zookeeper]:    Completed 3200 ops in 22.092 secs (~144.849 ops/sec), op time: 21.00/594.00/216.79/230.75/321.30 (ms)
+[Zookeeper]:    Completed 3200 ops in 23.339 secs (~137.110 ops/sec), op time: 8.00/619.00/229.44/246.00/325.65 (ms)
+[Zookeeper]:    Completed 3200 ops in 27.244 secs (~117.457 ops/sec), op time: 7.00/720.00/267.79/298.75/399.55 (ms)
+[Zookeeper]:    Completed 3200 ops in 28.099 secs (~113.883 ops/sec), op time: 13.00/764.00/275.68/300.00/391.65 (ms)
+[Zookeeper]:    Completed 3200 ops in 29.067 secs (~110.090 ops/sec), op time: 12.00/773.00/285.73/317.00/422.10 (ms)
+[Zookeeper]:    Completed 3200 ops in 25.171 secs (~127.130 ops/sec), op time: 9.00/798.00/246.81/278.75/377.55 (ms)
+[Zookeeper]:    Completed 3200 ops in 25.919 secs (~123.462 ops/sec), op time: 11.00/750.00/254.41/281.75/376.20 (ms)
+[Zookeeper]:    Completed 3200 ops in 24.632 secs (~129.912 ops/sec), op time: 29.00/703.00/242.11/253.00/360.00 (ms)
+[Zookeeper]:    Completed 3200 ops in 26.380 secs (~121.304 ops/sec), op time: 8.00/744.00/258.64/283.00/370.55 (ms)
+[Zookeeper]:    Completed 3200 ops in 29.244 secs (~109.424 ops/sec), op time: 13.00/755.00/288.19/320.00/425.10 (ms)
+```
