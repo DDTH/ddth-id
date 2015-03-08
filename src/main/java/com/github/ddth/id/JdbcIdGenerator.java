@@ -9,7 +9,6 @@ import java.util.concurrent.ExecutionException;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.dao.DeadlockLoserDataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -40,16 +39,19 @@ public class JdbcIdGenerator extends SerialIdGenerator {
     public static JdbcIdGenerator getInstance(final String jdbcDriver, final String jdbcUrl,
             final String jdbcUser, final String jdbcPassword, final String jdbcTableName) {
         try {
-            final HashCodeBuilder hcb = new HashCodeBuilder(19, 81);
-            hcb.append(jdbcDriver).append(jdbcUrl).append(jdbcUrl).append(jdbcPassword)
-                    .append(jdbcTableName);
-            final String hashKey = String.valueOf(hcb.hashCode()) + "-" + jdbcUrl + "-" + jdbcUser
-                    + "-" + jdbcTableName;
-            JdbcIdGenerator idGen = (JdbcIdGenerator) idGenerators.get(hashKey,
+            // final HashCodeBuilder hcb = new HashCodeBuilder(19, 81);
+            // hcb.append(jdbcDriver).append(jdbcUrl).append(jdbcUser).append(jdbcPassword)
+            // .append(jdbcTableName);
+            // final String hashKey = String.valueOf(hcb.hashCode()) + "-" +
+            // jdbcUrl + "-" + jdbcUser
+            // + "-" + jdbcTableName;
+            final StringBuffer key = new StringBuffer();
+            key.append(jdbcUrl).append("|").append(jdbcUser).append("|").append(jdbcPassword)
+                    .append("|").append(jdbcTableName);
+            JdbcIdGenerator idGen = (JdbcIdGenerator) idGenerators.get(key.toString(),
                     new Callable<SerialIdGenerator>() {
                         @Override
                         public SerialIdGenerator call() throws Exception {
-                            // build datasource
                             BasicDataSource ds = new BasicDataSource();
                             ds.setDriverClassName(jdbcDriver);
                             ds.setUrl(jdbcUrl);
@@ -197,19 +199,23 @@ public class JdbcIdGenerator extends SerialIdGenerator {
         // normal case: update & get the value
         try {
             Connection conn = connection();
-            try {
-                conn.setAutoCommit(false);
-                JdbcTemplate jdbcTemplate = jdbcTemplate(conn);
-                if (_update(jdbcTemplate, namespace, 0, 3)) {
-                    Long result = _select(jdbcTemplate, namespace, 0, 3);
-                    conn.commit();
-                    return result != null ? result.longValue() : 0;
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(false);
+                    JdbcTemplate jdbcTemplate = jdbcTemplate(conn);
+                    if (_update(jdbcTemplate, namespace, 0, 3)) {
+                        Long result = _select(jdbcTemplate, namespace, 0, 3);
+                        conn.commit();
+                        return result != null ? result.longValue() : 0;
+                    }
+                } catch (SQLException e) {
+                    conn.rollback();
+                    throw e;
+                } finally {
+                    conn.close();
                 }
-            } catch (SQLException e) {
-                conn.rollback();
-                throw e;
-            } finally {
-                conn.close();
+            } else {
+                return -1;
             }
         } catch (SQLException e) {
             throw new IdException.OperationFailedException(e);
@@ -223,18 +229,21 @@ public class JdbcIdGenerator extends SerialIdGenerator {
         // insert it
         try {
             Connection conn = connection();
-            try {
-                conn.setAutoCommit(true);
-                JdbcTemplate jdbcTemplate = jdbcTemplate(conn);
-                _insert(jdbcTemplate, namespace, 0, 3);
-            } finally {
-                conn.close();
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    JdbcTemplate jdbcTemplate = jdbcTemplate(conn);
+                    _insert(jdbcTemplate, namespace, 0, 3);
+                } finally {
+                    conn.close();
+                }
             }
         } catch (SQLException e) {
             throw new IdException.OperationFailedException(e);
         }
 
-        return nextId(namespace, true);
+        // try to get next id again, once
+        return nextId(namespace, false);
     }
 
     /**
@@ -252,13 +261,17 @@ public class JdbcIdGenerator extends SerialIdGenerator {
     public long currentId(final String namespace) {
         try {
             Connection conn = connection();
-            try {
-                conn.setAutoCommit(true);
-                JdbcTemplate jdbcTemplate = jdbcTemplate(conn);
-                Long result = _select(jdbcTemplate, namespace, 0, 3);
-                return result != null ? result.longValue() : 0;
-            } finally {
-                conn.close();
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    JdbcTemplate jdbcTemplate = jdbcTemplate(conn);
+                    Long result = _select(jdbcTemplate, namespace, 0, 3);
+                    return result != null ? result.longValue() : 0;
+                } finally {
+                    conn.close();
+                }
+            } else {
+                return -1;
             }
         } catch (SQLException e) {
             throw new IdException.OperationFailedException(e);
@@ -274,12 +287,16 @@ public class JdbcIdGenerator extends SerialIdGenerator {
     public boolean setValue(final String namespace, final long value) {
         try {
             Connection conn = connection();
-            try {
-                conn.setAutoCommit(true);
-                JdbcTemplate jdbcTemplate = jdbcTemplate(conn);
-                return _updateSet(jdbcTemplate, namespace, value, 0, 3);
-            } finally {
-                conn.close();
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    JdbcTemplate jdbcTemplate = jdbcTemplate(conn);
+                    return _updateSet(jdbcTemplate, namespace, value, 0, 3);
+                } finally {
+                    conn.close();
+                }
+            } else {
+                return false;
             }
         } catch (SQLException e) {
             throw new IdException.OperationFailedException(e);

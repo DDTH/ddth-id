@@ -77,8 +77,8 @@ public class RedisIdGenerator extends SerialIdGenerator {
     public static RedisIdGenerator getInstance(final String redisHost, final int redisPort,
             final String redisUser, final String redisPassword, final PoolConfig redisPoolConfig) {
         StringBuilder key = new StringBuilder();
-        key.append(redisHost).append(":").append(redisPort).append(":").append(redisUser)
-                .append(":").append(redisPassword);
+        key.append(redisHost).append("|").append(redisPort).append("|").append(redisUser)
+                .append("|").append(redisPassword);
         try {
             RedisIdGenerator idGen = (RedisIdGenerator) idGenerators.get(key.toString(),
                     new Callable<SerialIdGenerator>() {
@@ -179,12 +179,16 @@ public class RedisIdGenerator extends SerialIdGenerator {
     public long nextId(final String namespace) {
         IRedisClient redisClient = redisFactory.getRedisClient(redisHost, redisPort, redisUser,
                 redisPassword, redisPoolConfig);
-        try {
-            return redisClient.incBy(namespace, 1);
-        } catch (Exception e) {
-            throw new IdException.OperationFailedException(e);
-        } finally {
-            redisClient.close();
+        if (redisClient != null) {
+            try {
+                return redisClient.incBy(namespace, 1);
+            } catch (Exception e) {
+                throw new IdException.OperationFailedException(e);
+            } finally {
+                redisClient.close();
+            }
+        } else {
+            return -1;
         }
     }
 
@@ -195,15 +199,19 @@ public class RedisIdGenerator extends SerialIdGenerator {
     public long currentId(final String namespace) {
         IRedisClient redisClient = redisFactory.getRedisClient(redisHost, redisPort, redisUser,
                 redisPassword, redisPoolConfig);
-        try {
-            String value = redisClient.get(namespace);
-            return Long.parseLong(value);
-        } catch (NumberFormatException | NullPointerException e) {
-            return 0;
-        } catch (Exception e) {
-            throw new IdException.OperationFailedException(e);
-        } finally {
-            redisClient.close();
+        if (redisClient != null) {
+            try {
+                String value = redisClient.get(namespace);
+                return Long.parseLong(value);
+            } catch (NumberFormatException | NullPointerException e) {
+                return 0;
+            } catch (Exception e) {
+                throw new IdException.OperationFailedException(e);
+            } finally {
+                redisClient.close();
+            }
+        } else {
+            return -1;
         }
     }
 
@@ -216,13 +224,17 @@ public class RedisIdGenerator extends SerialIdGenerator {
     public boolean setValue(final String namespace, final long value) {
         IRedisClient redisClient = redisFactory.getRedisClient(redisHost, redisPort, redisUser,
                 redisPassword, redisPoolConfig);
-        try {
-            redisClient.set(namespace, String.valueOf(value), IRedisClient.TTL_PERSISTENT);
-            return true;
-        } catch (Exception e) {
-            throw new IdException.OperationFailedException(e);
-        } finally {
-            redisClient.close();
+        if (redisClient != null) {
+            try {
+                redisClient.set(namespace, String.valueOf(value), IRedisClient.TTL_PERSISTENT);
+                return true;
+            } catch (Exception e) {
+                throw new IdException.OperationFailedException(e);
+            } finally {
+                redisClient.close();
+            }
+        } else {
+            return false;
         }
     }
 }

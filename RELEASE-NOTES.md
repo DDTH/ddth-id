@@ -1,6 +1,11 @@
 ddth-id release notes
 =====================
 
+0.4.1 - 2015-03-08
+------------------
+- Bug fixes & Improvements.
+
+
 0.4.0 - 2015-02-26
 ------------------
 - New API: `SerialIdGenerator.setValue(final String namespace, final long value)`.

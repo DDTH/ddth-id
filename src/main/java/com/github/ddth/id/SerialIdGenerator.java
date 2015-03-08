@@ -53,7 +53,8 @@ public abstract class SerialIdGenerator {
     /**
      * Generates next id.
      * 
-     * @return
+     * @return next id for the specified namespace as a long, {@code 0} if not
+     *         supported or invalid namespace, negative value if error.
      */
     public abstract long nextId(final String namespace);
 
@@ -61,7 +62,8 @@ public abstract class SerialIdGenerator {
      * Gets current id.
      * 
      * @param namespace
-     * @return
+     * @return current id for the specified namespace as long, negative value if
+     *         error.
      * @since 0.2.0
      */
     public abstract long currentId(final String namespace);
