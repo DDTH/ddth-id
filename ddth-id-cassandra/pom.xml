@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>com.github.ddth</groupId>
 		<artifactId>ddth-id</artifactId>
-		<version>0.5.0</version>
+		<version>0.5.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>ddth-id-cassandra</artifactId>
-	<version>0.5.0</version>
+	<version>0.5.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>ddth-id-cassandra</name>
@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>com.github.ddth</groupId>
 			<artifactId>ddth-id-core</artifactId>
-			<version>0.5.0</version>
+			<version>0.5.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- for Cassandra ID Generator -->

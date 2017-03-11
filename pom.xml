@@ -9,7 +9,7 @@
 
 	<groupId>com.github.ddth</groupId>
 	<artifactId>ddth-id</artifactId>
-	<version>0.5.0</version>
+	<version>0.5.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>ddth-id</name>
