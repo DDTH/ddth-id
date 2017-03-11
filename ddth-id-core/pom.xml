@@ -1,0 +1,112 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.github.ddth</groupId>
+		<artifactId>ddth-id</artifactId>
+		<version>0.4.2-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>ddth-id-core</artifactId>
+	<version>0.4.2-SNAPSHOT</version>
+	<packaging>bundle</packaging>
+
+	<name>ddth-id-core</name>
+	<description>DDTH's ID Generator Library</description>
+	<url>https://github.com/DDTH/ddth-id</url>
+
+	<developers>
+		<developer>
+			<id>btnguyen2k</id>
+			<name>Thanh Ba Nguyen</name>
+			<email>btnguyen2k@gmail.com</email>
+		</developer>
+	</developers>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>16.0</version>
+		</dependency>
+
+		<!-- for Cassandra ID Generator -->
+		<dependency>
+			<groupId>com.github.ddth</groupId>
+			<artifactId>ddth-cql-utils</artifactId>
+			<version>${version.ddth_cql_utils}</version>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- for JDBC ID Generator -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${version.spring_framework}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>${version.hikaricp}</version>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- for Redis ID Generator -->
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>${version.jedis}</version>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- for ZooKeeper ID Generator -->
+		<dependency>
+			<groupId>org.apache.curator</groupId>
+			<artifactId>curator-framework</artifactId>
+			<version>${version.curator}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.curator</groupId>
+			<artifactId>curator-recipes</artifactId>
+			<version>${version.curator}</version>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${version.java}</source>
+					<target>${version.java}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<!-- <Bundle-Activator></Bundle-Activator> -->
+						<Export-Package>com.github.ddth.id,com.github.ddth.id.utils,com.github.ddth.id.cassandra,com.github.ddth.id.jdbc,com.github.ddth.id.redis,com.github.ddth.id.zookeeper</Export-Package>
+						<!-- <Import-Package></Import-Package> -->
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

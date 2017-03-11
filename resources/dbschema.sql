@@ -2,7 +2,7 @@
 
 -- MySQL sample: must use an table engine with transaction support (e.g. InnoDB)
 -- table name: use any name you may like
--- column names: must be id_name and id_value
+-- column names: default values are `id_name` and `id_value`
 CREATE TABLE ddth_id (
     id_name                     VARCHAR(32)                         NOT NULL,
     id_value                    BIGINT                              NOT NULL DEFAULT 0,
@@ -12,7 +12,7 @@ CREATE TABLE ddth_id (
 
 -- PostgreSQL sample:
 -- table name: use any name you may like
--- column names: must be id_name and id_value
+-- column names: default values are `id_name` and `id_value`
 CREATE TABLE ddth_id (
     id_name                     VARCHAR(32)                         NOT NULL,
     id_value                    BIGINT                              NOT NULL DEFAULT 0,

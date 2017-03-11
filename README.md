@@ -6,40 +6,87 @@ DDTH's ID Generator Library.
 Project home:
 [https://github.com/DDTH/ddth-id](https://github.com/DDTH/ddth-id)
 
-OSGi environment: ddth-id modules are packaged as an OSGi bundle.
+`ddth-id` requires Java 8+ since v0.5.0
 
 
 ## License ##
 
-See LICENSE.txt for details. Copyright (c) 2014-2015 Thanh Ba Nguyen.
+See LICENSE.txt for details. Copyright (c) 2014-2017 Thanh Ba Nguyen.
 
 Third party libraries are distributed under their own licenses.
 
 
-## Installation #
+## Installation ##
 
-Latest release version: `0.4.1`. See [RELEASE-NOTES.md](RELEASE-NOTES.md).
+Latest release version: `0.5.0`. See [RELEASE-NOTES.md](RELEASE-NOTES.md).
 
-Maven dependency:
+Maven dependency: if only a sub-set of `ddth-id` is used, choose the corresponding dependency artifact(s) to reduce the number of unused jar files.
+
+`ddth-id-core`: in-memory id-generator and Snowflake id-generator; Cassandra, Jdbc, Redis and Zookeeper dependencies are optional.
 
 ```xml
 <dependency>
 	<groupId>com.github.ddth</groupId>
-	<artifactId>ddth-id</artifactId>
-	<version>0.4.1</version>
+	<artifactId>ddth-id-core</artifactId>
+	<version>0.5.0</version>
 </dependency>
 ```
 
+`ddth-id-cassandra`: include all `ddth-id-core` and Cassandra dependencies
+
+```xml
+<dependency>
+    <groupId>com.github.ddth</groupId>
+    <artifactId>ddth-id-cassandra</artifactId>
+    <version>0.5.0</version>
+    <type>pom</type>
+</dependency>
+```
+
+`ddth-id-jdbc`: include all `ddth-id-core` and Jdbc dependencies
+
+```xml
+<dependency>
+    <groupId>com.github.ddth</groupId>
+    <artifactId>ddth-id-jdbc</artifactId>
+    <version>0.5.0</version>
+    <type>pom</type>
+</dependency>
+```
+
+`ddth-id-redis`: include all `ddth-id-core` and Redis dependencies
+
+```xml
+<dependency>
+    <groupId>com.github.ddth</groupId>
+    <artifactId>ddth-id-redis</artifactId>
+    <version>0.5.0</version>
+    <type>pom</type>
+</dependency>
+```
+
+`ddth-id-zookeeper`: include all `ddth-id-core` and ZooKeeper dependencies
+
+```xml
+<dependency>
+    <groupId>com.github.ddth</groupId>
+    <artifactId>ddth-id-zookeeper</artifactId>
+    <version>0.5.0</version>
+    <type>pom</type>
+</dependency>
+```
+
+
 ## Usage ##
 
-`ddth-id` can generate several types of ID:
+`ddth-id` can generate 2 types of ID:
 
 - Distributed:
-  - Based on Twitter Snowflake algorithm: 48, 64 and 128-bit integers.
+  - Based on Twitter Snowflake algorithm, IDs are 48, 64 or 128-bit integers.
   - Generated IDs are unique across all nodes (each node must has a unique node-id).
   - Next generated ID is larger than previous ones.
   - Time-based: each generated ID is associated with a timestamp.
-  - Non-serial: `next-id` is NOT equal to `previous-id + 1`!
+  - Non-serial: `next-id` may NOT be equal to `previous-id + 1`!
 - Serial:
   - `next-id = previous-id + 1`
 
@@ -66,13 +113,15 @@ Example 2: Generate serial IDs
 
 ```java
 //generate IDs, backed by Redis.
-SerialIdGenerator idGenRedis = RedisIdGenerator.getInstance("localhost", 6379);
+SerialIdGenerator idGenRedis = RedisIdGenerator.getInstance("localhost:6379");
 
 //generate IDs, backed by Zookeeper.
-SerialIdGenerator idGenZk = ZookeeperIdGenerator.getInstance("localhost:2181/idgen");
+SerialIdGenerator idGenZk = ZookeeperIdGenerator.getInstance("localhost:2181/ddth-id");
 
 //generate IDs, backed by a database system.
-JdbcIdGenerator idGenJdbc = JdbcIdGenerator.getInstance("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/tempdb", "user", "password", "tableName");
+JdbcIdGenerator idGenJdbc = new JdbcIdGenerator();
+idGenJdbc.setDataSource(dataSource)
+idGenJdbc.init();
 
 //generate an ID within namespace "users"
 long userId = idGenRedis.nextId("users");

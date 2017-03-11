@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.github.ddth</groupId>
+		<artifactId>ddth-id</artifactId>
+		<version>0.4.2-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>ddth-id-cassandra</artifactId>
+	<version>0.4.2-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>ddth-id-cassandra</name>
+	<description>DDTH's ID Generator Library</description>
+	<url>https://github.com/DDTH/ddth-id</url>
+
+	<developers>
+		<developer>
+			<id>btnguyen2k</id>
+			<name>Thanh Ba Nguyen</name>
+			<email>btnguyen2k@gmail.com</email>
+		</developer>
+	</developers>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.github.ddth</groupId>
+			<artifactId>ddth-id-core</artifactId>
+			<version>0.4.2-SNAPSHOT</version>
+		</dependency>
+
+		<!-- for Cassandra ID Generator -->
+		<dependency>
+			<groupId>com.github.ddth</groupId>
+			<artifactId>ddth-cql-utils</artifactId>
+			<version>${version.ddth_cql_utils}</version>
+		</dependency>
+	</dependencies>
+</project>
